@@ -1,0 +1,39 @@
+package com.lukeherron.expressiontree.node;
+
+import com.lukeherron.expressiontree.visitor.Visitor;
+
+/**
+ * Extends LeafNode base class to provide boolean leaf nodes i.e. leaf nodes that store boolean true/false values
+ */
+public class BooleanLeafNode extends LeafNode {
+
+    private boolean item;
+
+    /**
+     * Constructor for LeafNode. Accepts a boolean to be stored in this node
+     * @param item The item to be added as the leaf node
+     */
+    public BooleanLeafNode(boolean item) {
+        this.item = item;
+    }
+
+    /**
+     * Constructor for LeafNode. Accepts a String which will be parsed to a boolean to be stored in this node
+     * @param item The item to be added as the leaf node
+     */
+    public BooleanLeafNode(String item) {
+        this.item = Boolean.parseBoolean(item);
+    }
+
+    /**
+     * Return the item stored in the node
+     * @return boolean contained in this node
+     */
+    public Object item() {
+        return this.item;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+}
