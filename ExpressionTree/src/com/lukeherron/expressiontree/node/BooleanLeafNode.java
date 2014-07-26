@@ -7,30 +7,22 @@ import com.lukeherron.expressiontree.visitor.Visitor;
  */
 public class BooleanLeafNode extends LeafNode {
 
-    private boolean item;
-
-    /**
-     * Constructor for LeafNode. Accepts a boolean to be stored in this node
-     * @param item The item to be added as the leaf node
-     */
-    public BooleanLeafNode(boolean item) {
-        this.item = item;
-    }
+    private String item;
 
     /**
      * Constructor for LeafNode. Accepts a String which will be parsed to a boolean to be stored in this node
      * @param item The item to be added as the leaf node
      */
     public BooleanLeafNode(String item) {
-        this.item = Boolean.parseBoolean(item);
+        this.item = item;
     }
 
     /**
      * Return the item stored in the node
      * @return boolean contained in this node
      */
-    public Object item() {
-        return this.item;
+    public int item() {
+        return Integer.parseInt(this.item);
     }
 
     public void accept(Visitor visitor) {

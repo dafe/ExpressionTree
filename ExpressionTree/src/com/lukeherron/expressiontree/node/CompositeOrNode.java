@@ -11,7 +11,7 @@ public class CompositeOrNode extends CompositeBinaryNode {
         super(left, right);
     }
 
-    public Object item() {
+    public int item() {
         return '|';
     }
 

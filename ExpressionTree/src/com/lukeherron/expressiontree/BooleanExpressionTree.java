@@ -32,10 +32,10 @@ public class BooleanExpressionTree extends ExpressionTree {
         return temp;
     }
 
-    public boolean item() throws Exception {
-        boolean temp;
+    public int item() throws Exception {
+        int temp;
         synchronized (this) {
-            temp = (boolean)root.item();
+            temp = root.item();
         }
         return temp;
     }

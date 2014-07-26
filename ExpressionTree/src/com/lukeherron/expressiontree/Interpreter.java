@@ -37,9 +37,9 @@ public class Interpreter {
      * @param inputExpression String to be converted into a parse tree
      * @return Expression tree containing the converted parse tree
      */
-    public ExpressionTree interpret(String inputExpression) {
+    public ExpressionTree interpret(String inputExpression, String expressionType) {
         // The parse tree is implemented as a stack
-        Stack<Symbol> parseTree = buildParseTree(inputExpression);
+        Stack<Symbol> parseTree = buildParseTree(inputExpression, expressionType);
 
         // We include a method here for performing any further optimisations on our parse tree before we convert it
         optimiseParseTree(parseTree);
@@ -54,15 +54,42 @@ public class Interpreter {
      * @param inputExpression String input to be parsed and inserted into the ParseTree
      * @return ParseTree containing all of the parsed and inserted input expressions
      */
-    public Stack<Symbol> buildParseTree(String inputExpression) {
+    public Stack<Symbol> buildParseTree(String inputExpression, String expressionType) {
         Stack<Symbol> parseTree = new Stack<>();
         lastValidInput = null;
         accumulatedPrecedence = 0;
         multiDigitNumbers = 0;
 
+        switch (expressionType) {
+            case "algebraic":
+                parseTree = buildAlgebraicParseTree(inputExpression, parseTree);
+                break;
+            case "boolean":
+                parseTree = buildBooleanParseTree(inputExpression, parseTree);
+                break;
+            default:
+                break;
+        }
+
+        return parseTree;
+    }
+
+    public Stack<Symbol> buildAlgebraicParseTree(String inputExpression, Stack<Symbol> parseTree) {
         for (int i = 0; i < inputExpression.length(); ++i) {
             // Locate the next symbol in the input and place it into the parse tree according to its precedence
-            parseTree = parseNextSymbol(inputExpression, i, parseTree);
+            parseTree = parseNextAlgebraicSymbol(inputExpression, i, parseTree);
+            if (multiDigitNumbers > i) {
+                i = multiDigitNumbers;
+            }
+        }
+
+        return parseTree;
+    }
+
+    public Stack<Symbol> buildBooleanParseTree(String inputExpression, Stack<Symbol> parseTree) {
+        for (int i = 0; i < inputExpression.length(); ++i) {
+            // Locate the next symbol in the input and place it into the parse tree according to its precedence
+            parseTree = parseNextBooleanSymbol(inputExpression, i, parseTree);
             if (multiDigitNumbers > i) {
                 i = multiDigitNumbers;
             }
@@ -92,10 +119,56 @@ public class Interpreter {
      * @param parseTree Stack of parseTree Symbols to be processed
      * @return ParseTree that has been constructed based on the inputExpression string
      */
-    private Stack<Symbol> parseNextSymbol(String inputExpression, int index, Stack<Symbol> parseTree) {
+    private Stack<Symbol> parseNextAlgebraicSymbol(String inputExpression, int index, Stack<Symbol> parseTree) {
         char symbol = inputExpression.charAt(index);
         if (Character.isLetterOrDigit(symbol)) {
-            parseTree = insertNumberOrVariable(inputExpression, index, parseTree, Character.isLetterOrDigit(symbol));
+            parseTree = insertNumberOrVariable(inputExpression, index, parseTree, Character.isLetter(symbol));
+        }
+        else if (symbol == '+') {
+            Add operator = new Add();
+            operator.addPrecedence(accumulatedPrecedence);
+            lastValidInput = null;
+            parseTree = insertSymbolByPrecedence(operator, parseTree);
+        }
+        else if (symbol == '-') {
+            Symbol operator = lastValidInput == null ? new Negate() : new Subtract();
+            operator.addPrecedence(accumulatedPrecedence);
+            lastValidInput = null;
+            parseTree = insertSymbolByPrecedence(operator, parseTree);
+        }
+        else if (symbol == '*') {
+            Multiply operator = new Multiply();
+            operator.addPrecedence(accumulatedPrecedence);
+            lastValidInput = null;
+            parseTree = insertSymbolByPrecedence(operator, parseTree);
+        }
+        else if (symbol == '/') {
+            Divide operator = new Divide();
+            operator.addPrecedence(accumulatedPrecedence);
+            lastValidInput = null;
+            parseTree = insertSymbolByPrecedence(operator, parseTree);
+        }
+        else if (symbol == '(') {
+            parseTree = handleParentheses(inputExpression, index, parseTree, "algebraic");
+        }
+        else if (inputExpression.charAt(index) == ' ' || inputExpression.charAt(index) == '\n') {
+            // Skip whitespace
+        }
+
+        return parseTree;
+    }
+
+    /**
+     * Parse boolean terminal expressions
+     * @param inputExpression String containing expressions to be parse
+     * @param index int indicating the current position in the input expression
+     * @param parseTree Stack of parseTree Symbols to be processed
+     * @return ParseTree that has been constructed based on the inputExpression string
+     */
+    private Stack<Symbol> parseNextBooleanSymbol(String inputExpression, int index, Stack<Symbol> parseTree) {
+        char symbol = inputExpression.charAt(index);
+        if (Character.isLetterOrDigit(symbol)) {
+            parseTree = insertString(inputExpression, index, parseTree);
         }
         else if (symbol == '&') {
             And operator = new And();
@@ -115,37 +188,50 @@ public class Interpreter {
             lastValidInput = null;
             parseTree = insertSymbolByPrecedence(operator, parseTree);
         }
-        else if (symbol == '+') {
-            Add operator = new Add();
-            operator.addPrecedence(accumulatedPrecedence);
-            lastValidInput = null;
-            parseTree = insertSymbolByPrecedence(operator, parseTree);
-        }
-        else if (symbol == '-') {
-            Symbol operator = lastValidInput == null ? new Negate() : new Subtract();
-            operator.addPrecedence(accumulatedPrecedence);
-        }
-        else if (symbol == '*') {
-            Multiply operator = new Multiply();
-            operator.addPrecedence(accumulatedPrecedence);
-            lastValidInput = null;
-            parseTree = insertSymbolByPrecedence(operator, parseTree);
-        }
-        else if (symbol == '/') {
-            Divide operator = new Divide();
-            operator.addPrecedence(accumulatedPrecedence);
-            lastValidInput = null;
-            parseTree = insertSymbolByPrecedence(operator, parseTree);
-        }
         else if (symbol == '(') {
-            parseTree = handleParentheses(inputExpression, index, parseTree);
+            parseTree = handleParentheses(inputExpression, index, parseTree, "boolean");
+        }
+        else if (inputExpression.charAt(index) == ' ' || inputExpression.charAt(index) == '\n') {
+            // Skip whitespace
         }
 
         return parseTree;
     }
 
     private Stack<Symbol> insertNumberOrVariable(String input, int startIndex, Stack<Symbol> parseTree, boolean isVar) {
+        int endIndex = 1;
 
+        /* Merge all consecutive number chars int a single Number symbol. Eg. '123' = int (123). We do this by locating
+         * the end of the number, adjusting endIndex accordingly */
+        //if (input.length() > startIndex + endIndex) {
+        //    while (startIndex + endIndex < input.length() && Character.isDigit(input.charAt(startIndex + endIndex))) {
+        //        ++endIndex;
+        //    }
+        //}
+
+        if (input.length() > startIndex + endIndex) {
+            // Locate the end of the number
+            for (; startIndex + endIndex < input.length() && Character.isDigit(input.charAt(startIndex + endIndex)); ++endIndex) {
+                continue;
+            }
+        }
+
+        /* If we have received a variable as the input, then look up that variables value in the Symbol Table and assign
+         * it as our number, otherwise we can just parse the string as it should represent a number */
+        String parseString = input.substring(startIndex, startIndex + endIndex);
+        Number number = isVar ? new Number(symbolTable.get(parseString)) : new Number(parseString);
+        number.addPrecedence(accumulatedPrecedence);
+        lastValidInput = number;
+
+        /* Update startIndex to the last character that was a number. The ++startIndex will update the startIndex at the
+         * end of the loop to the next check */
+        startIndex += endIndex - 1;
+        multiDigitNumbers = startIndex;
+
+        return insertSymbolByPrecedence(number, parseTree);
+    }
+
+    private Stack<Symbol> insertString(String input, int startIndex, Stack<Symbol> parseTree) {
         int endIndex = 1;
 
         /* Merge all consecutive number chars int a single Number symbol. Eg. '123' = int (123). We do this by locating
@@ -157,19 +243,19 @@ public class Interpreter {
         }
 
         /* If we have received a variable as the input, then look up that variables value in the Symbol Table and assign
-         it as our number, otherwise we can just parse the string as it should represent a number */
-        String numberString = input.substring(startIndex, startIndex + endIndex);
-        Number number = isVar ? new Number(symbolTable.get(numberString)) : new Number(numberString);
+         * it as our number, otherwise we can just parse the string as it should represent a number */
+        String parseString = input.substring(startIndex, startIndex + endIndex);
 
-        number.addPrecedence(accumulatedPrecedence);
-        lastValidInput = number;
+        Bool bool = new Bool(parseString);
+        bool.addPrecedence(accumulatedPrecedence);
+        lastValidInput = bool;
 
-        /* Update startIndex to the last character that was a number. The ++startIndex will update the startIndex at the
-         end of the loop to the next check */
-        startIndex += endIndex + 1;
+        /* Update startIndex to the last character that was the string. The ++startIndex will update the startIndex at
+         * the end of the loop to the next check */
+        startIndex += endIndex - 1;
         multiDigitNumbers = startIndex;
 
-        return insertSymbolByPrecedence(number, parseTree);
+        return insertSymbolByPrecedence(bool, parseTree);
     }
 
     private Stack<Symbol> insertSymbolByPrecedence(Symbol symbol, Stack<Symbol> parseTree) {
@@ -188,7 +274,7 @@ public class Interpreter {
 
             if (parent.precedence() < symbol.precedence()) {
                 /* Symbol left will be the old child. New parent child will be the Symbol. To allow infinite negations,
-                we have to check for unary operator */
+                 * we have to check for unary operator */
                 if (symbol.left == null) {
                     symbol.left = child;
                 }
@@ -197,8 +283,8 @@ public class Interpreter {
             }
             else {
                 /* This can be one of two things, either we are the same precedence or we are less precedence than the
-                parent. This also means different things for unary ops. The most recent unary op (negate) has a higher
-                precedence */
+                 * parent. This also means different things for unary ops. The most recent unary op (negate) has a
+                 * higher precedence */
                 UnaryOperator operator = new Negate();
 
                 if (symbol.getClass() == operator.getClass()) {
@@ -209,7 +295,7 @@ public class Interpreter {
                 }
                 else {
                     /* Everything else is evaluated the same. For instance, if this is 5 * 4 / 2, and we currently have
-                    Multi(5, 4) in the parseTree, we need to make parent our left child */
+                     * Multi(5, 4) in the parseTree, we need to make parent our left child */
                     symbol.left = parent;
                     parseTree.pop();
                     parseTree.push(symbol);
@@ -231,13 +317,16 @@ public class Interpreter {
      * @param masterParseTree Stack that holds parseTree processed from input expression
      * @return ParseTree that has been constructed based on the input expression
      */
-    private Stack<Symbol> handleParentheses(String inputExpression, int index, Stack<Symbol> masterParseTree) {
+    private Stack<Symbol> handleParentheses(String inputExpression, int index, Stack<Symbol> masterParseTree,
+                                            String parseTreeType) {
         accumulatedPrecedence += Symbol.parenPrecedence;
         Stack<Symbol> localParseTree = new Stack<>();
 
         // Process the input expression between the parentheses.
         for (++index; index < inputExpression.length(); ++index) {
-            localParseTree = parseNextSymbol(inputExpression, index, localParseTree);
+            localParseTree = parseTreeType.equals("algebraic") ?
+                    parseNextAlgebraicSymbol(inputExpression, index, localParseTree) :
+                    parseNextBooleanSymbol(inputExpression, index, localParseTree);
 
             if (multiDigitNumbers > index) {
                 index = multiDigitNumbers;

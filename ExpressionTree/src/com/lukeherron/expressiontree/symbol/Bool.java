@@ -8,14 +8,9 @@ import com.lukeherron.expressiontree.node.BooleanLeafNode;
  */
 public class Bool extends Symbol {
 
-    public Boolean item;
+    public String item;
 
     public Bool(String input) {
-        super(null, null, boolPrecedence);
-        item = Boolean.parseBoolean(input);
-    }
-
-    public Bool(Boolean input) {
         super(null, null, boolPrecedence);
         item = input;
     }

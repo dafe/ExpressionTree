@@ -1,13 +1,16 @@
 package com.lukeherron.expressiontree;
 
+import com.lukeherron.expressiontree.iterator.IteratorFactory;
 import com.lukeherron.expressiontree.node.ComponentNode;
-import com.lukeherron.expressiontree.visitor.Visitable;
 import com.lukeherron.expressiontree.visitor.Visitor;
+import com.lukeherron.expressiontree.visitor.Visitable;
+
+import java.util.Iterator;
 
 public abstract class ExpressionTree implements Visitable {
 
     protected ComponentNode root = null;
-    //protected IteratorFactory treeIteratorFactory = new IteratorFactory();
+    protected IteratorFactory treeIteratorFactory = new IteratorFactory();
 
     /**
      * ExpressionTree constructor takes a Node pointer that contains all the nodes in the expression tree
@@ -40,14 +43,14 @@ public abstract class ExpressionTree implements Visitable {
         return temp;
     }
 
-    //public Iterator<ExpressionTree> makeIterator(String traversalOrderRequest) {
-    //   Iterator<ExpressionTree> temp;
-    //    synchronized (this) {
-    //        temp = treeIteratorFactory.makeIterator(this, traversalOrderRequest);
-    //    }
-    //
-    //    return temp;
-    //}
+    public Iterator<ExpressionTree> makeIterator(String traversalOrderRequest) {
+       Iterator<ExpressionTree> temp;
+        synchronized (this) {
+            temp = treeIteratorFactory.makeIterator(this, traversalOrderRequest);
+        }
+
+        return temp;
+    }
 
     @Override
     public void accept(Visitor visitor) {

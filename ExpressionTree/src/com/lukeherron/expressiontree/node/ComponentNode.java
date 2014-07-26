@@ -1,7 +1,7 @@
 package com.lukeherron.expressiontree.node;
 
-import com.lukeherron.expressiontree.visitor.Visitable;
 import com.lukeherron.expressiontree.visitor.Visitor;
+import com.lukeherron.expressiontree.visitor.Visitable;
 
 /**
  * Base class that represents all nodes found in an expression tree. This class represents the 'Component' class in the
@@ -29,7 +29,7 @@ public abstract class ComponentNode implements Visitable {
      * Returns the value stored in the node. No-op in the base class
      * @return object representing the symbol held by the node
      */
-    public Object item() {
+    public int item() {
         throw new UnsupportedOperationException("ComponentNode::item() called improperly");
     }
 

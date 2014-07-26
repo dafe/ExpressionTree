@@ -11,7 +11,7 @@ public class CompositeAddNode extends CompositeBinaryNode {
         super(left, right);
     }
 
-    public Object item() {
+    public int item() {
         return '+';
     }
 

@@ -11,7 +11,7 @@ public class CompositeNegateNode extends CompositeUnaryNode {
         super(right);
     }
 
-    public Object item() {
+    public int item() {
         return '-';
     }
 

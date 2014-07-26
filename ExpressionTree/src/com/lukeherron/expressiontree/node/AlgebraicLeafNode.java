@@ -29,7 +29,7 @@ public class AlgebraicLeafNode extends LeafNode {
      * Return the item stored in the node
      * @return int contained in this node
      */
-    public Object item() {
+    public int item() {
         return this.item;
     }
 
