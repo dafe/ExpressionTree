@@ -32,6 +32,11 @@ public class BooleanExpressionTree extends ExpressionTree {
         return temp;
     }
 
+    @Override
+    public String type() {
+        return "boolean";
+    }
+
     public int item() throws Exception {
         int temp;
         synchronized (this) {

@@ -1,5 +1,7 @@
 package com.lukeherron.expressiontree.visitor;
 
+import com.lukeherron.expressiontree.node.ComponentNode;
+
 import java.util.HashMap;
 
 /**
@@ -10,7 +12,6 @@ import java.util.HashMap;
 public class VisitorFactory {
 
     private static interface IVisitorFactoryCommand {
-
         public Visitor execute();
     }
 
@@ -21,14 +22,13 @@ public class VisitorFactory {
      * runtime
      */
     public VisitorFactory() {
-
-        visitorMap.put("eval", AlgebraicEvalVisitor::new);
-        visitorMap.put("boolEval", BooleanEvalVisitor::new);
+        visitorMap.put("algebraic-eval", AlgebraicEvalVisitor::new);
+        visitorMap.put("boolean-eval", BooleanEvalVisitor::new);
         visitorMap.put("print", PrintVisitor::new);
+        visitorMap.put("type", TypeVisitor::new);
     }
 
     public Visitor makeVisitor(String visitorRequest) {
-
         IVisitorFactoryCommand command = visitorMap.get(visitorRequest);
 
         if (command != null) {
@@ -36,5 +36,12 @@ public class VisitorFactory {
         } else {
             throw new IllegalArgumentException(visitorRequest + " is not a supported visitor");
         }
+    }
+
+    public Visitor makeEvalVisitor(ComponentNode node) {
+        Visitor typeVisitor = visitorMap.get("type").execute();
+        node.accept(typeVisitor);
+
+        return makeVisitor(((TypeVisitor)typeVisitor).getType() + "-eval");
     }
 }

@@ -32,6 +32,11 @@ public class AlgebraicExpressionTree extends ExpressionTree {
         return temp;
     }
 
+    @Override
+    public String type() {
+        return "algebraic";
+    }
+
     public int item() throws Exception {
         int temp;
         synchronized (this) {

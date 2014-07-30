@@ -2,6 +2,8 @@ package com.lukeherron.expressiontree;
 
 import com.lukeherron.expressiontree.node.ComponentNode;
 import com.lukeherron.expressiontree.visitor.TypeVisitor;
+import com.lukeherron.expressiontree.visitor.Visitor;
+import com.lukeherron.expressiontree.visitor.VisitorFactory;
 
 import java.util.HashMap;
 
@@ -16,7 +18,7 @@ public class ExpressionTreeFactory {
     }
 
     private HashMap<String, ExpressionTreeFactoryCommand> factoryMap = new HashMap<>();
-    TypeVisitor visitor = new TypeVisitor();
+    private static VisitorFactory visitorFactory = new VisitorFactory();
 
     public ExpressionTreeFactory() {
         factoryMap.put("algebraic", AlgebraicExpressionTree::new);
@@ -30,8 +32,9 @@ public class ExpressionTreeFactory {
      */
     public ExpressionTree makeExpressionTree(ComponentNode componentNodeRoot) {
         // Use the ComponentNode to decide what type of tree to make
-        componentNodeRoot.accept(this.visitor);
-        ExpressionTreeFactoryCommand command = factoryMap.get(this.visitor.getType());
+        Visitor typeVisitor = visitorFactory.makeVisitor("type");
+        componentNodeRoot.accept(typeVisitor);
+        ExpressionTreeFactoryCommand command = factoryMap.get(((TypeVisitor)typeVisitor).getType());
 
         return command.execute(componentNodeRoot);
     }

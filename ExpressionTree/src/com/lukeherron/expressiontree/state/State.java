@@ -1,0 +1,103 @@
+package com.lukeherron.expressiontree.state;
+
+import com.lukeherron.expressiontree.ExpressionTree;
+import com.lukeherron.expressiontree.visitor.AlgebraicEvalVisitor;
+import com.lukeherron.expressiontree.visitor.BooleanEvalVisitor;
+import com.lukeherron.expressiontree.visitor.Visitor;
+import com.lukeherron.expressiontree.visitor.VisitorFactory;
+
+import java.util.Iterator;
+
+/**
+ * Implementation of the State pattern that is used to define the various states that affect how users operations are
+ * processed.  Plays the role of the "State" base class in the State pattern that is used as the basis for the
+ * subclasses that actually define the various states.
+ */
+public class State {
+
+    private static VisitorFactory visitorFactory = new VisitorFactory();
+
+    /**
+     *
+     * @param context
+     * @param newFormat
+     */
+    void format(TreeOps context, String newFormat) {
+        throw new IllegalStateException("State.format() called in invalid state");
+    }
+
+    /**
+     *
+     * @param context
+     * @param expression
+     */
+    void makeTree(TreeOps context, String expression) {
+        throw new IllegalStateException("State.makeTree() called in invalid state");
+    }
+
+    /**
+     *
+     * @param context
+     * @param format
+     */
+    void print(TreeOps context, String format) {
+        throw new IllegalStateException("State.print() called in invalid state");
+    }
+
+    /**
+     *
+     * @param context
+     * @param format
+     */
+    void evaluate(TreeOps context, String format) {
+        throw new IllegalStateException("State.evaluate() called in invalid state");
+    }
+
+    /**
+     *
+     * @param tree
+     * @param traversalOrder
+     */
+    static void printTree(ExpressionTree tree, String traversalOrder) {
+        if (traversalOrder.equals("")) {
+            traversalOrder = "in-order";
+        }
+
+        Visitor printVisitor = visitorFactory.makeVisitor("print");
+
+        for (Iterator<ExpressionTree> it = tree.makeIterator(traversalOrder); it.hasNext();) {
+            it.next().accept(printVisitor);
+        }
+    }
+
+    /**
+     *
+     * @param tree
+     * @param traversalOrder
+     */
+    static void evaluateTree(ExpressionTree tree, String traversalOrder) {
+        if (traversalOrder.equals("")) {
+            traversalOrder = "post-order";
+        }
+        else if (!traversalOrder.equals("post-order")) {
+            throw new IllegalArgumentException(traversalOrder + " evaluation is not supported yet");
+        }
+
+        // Let the visitor factory decide on what type of eval visitor to create based upon the root node in the tree
+        Visitor evalVisitor = visitorFactory.makeEvalVisitor(tree.getRoot());
+
+        for (Iterator<ExpressionTree> it = tree.makeIterator(traversalOrder); it.hasNext();) {
+            it.next().accept(evalVisitor);
+        }
+
+        // Figure out how to print int if algebraic or bool if boolean
+        if (evalVisitor instanceof AlgebraicEvalVisitor) {
+            Integer total = ((AlgebraicEvalVisitor) evalVisitor).result();
+            System.out.println(total.toString());
+        }
+        else if (evalVisitor instanceof BooleanEvalVisitor) {
+            Boolean result = ((BooleanEvalVisitor) evalVisitor).result();
+            System.out.println(result);
+        }
+    }
+}

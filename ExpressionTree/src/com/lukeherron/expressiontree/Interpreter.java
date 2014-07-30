@@ -35,6 +35,7 @@ public class Interpreter {
      * This method first converts a string into a parse tree and then builds an expression tree out of the parse tree.
      * This method is implemented using the Template Method pattern
      * @param inputExpression String to be converted into a parse tree
+     * @param expressionType String indicating the type of tree to build from the inputExpression
      * @return Expression tree containing the converted parse tree
      */
     public ExpressionTree interpret(String inputExpression, String expressionType) {
@@ -44,9 +45,13 @@ public class Interpreter {
         // We include a method here for performing any further optimisations on our parse tree before we convert it
         optimiseParseTree(parseTree);
 
-        // Empty parse trees are perfectly fine, just make sure we don't try and build from an empty tree, return an
-        // empty expression tree instead.
+        // Empty parse trees are perfectly fine, just make sure we don't try and build from an empty tree. An empty
+        // expression tree should be returned instead.
         return parseTree.empty() ? expressionTreeFactory.makeExpressionTree(null) : buildExpressionTree(parseTree);
+    }
+
+    public ExpressionTree interpret(String inputExpression, ExpressionTree tree) {
+        return interpret(inputExpression, tree.type());
     }
 
     /**

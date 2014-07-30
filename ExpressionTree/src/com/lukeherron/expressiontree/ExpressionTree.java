@@ -25,6 +25,8 @@ public abstract class ExpressionTree implements Visitable {
 
     public abstract ExpressionTree right();
 
+    public abstract String type();
+
     public boolean isNull() {
         boolean temp;
         synchronized (this) {
