@@ -17,16 +17,16 @@ public class TreeOps {
     private Interpreter interpreter;
     private State state;
 
-    public TreeOps(String treeType) {
+    public TreeOps(ExpressionTree tree) {
         this.formatted = false;
-        this.tree = getNewTree(treeType);
+        this.tree = tree;
         this.interpreter = new Interpreter();
         this.state = new UninitialisedState();
     }
 
-    public TreeOps(ExpressionTree tree) {
+    public TreeOps(String treeType) {
         this.formatted = false;
-        this.tree = tree;
+        this.tree = getNewTree(treeType);
         this.interpreter = new Interpreter();
         this.state = new UninitialisedState();
     }
@@ -76,7 +76,7 @@ public class TreeOps {
      * @param keyValuePair String containing the key/value pair to set
      * @throws Exception
      */
-    void set(String keyValuePair) throws Exception {
+    public void set(String keyValuePair) throws Exception {
         String inputString = keyValuePair.replaceAll(" ", "");
         int pos;
 

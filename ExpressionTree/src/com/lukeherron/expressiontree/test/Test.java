@@ -1,7 +1,7 @@
 package com.lukeherron.expressiontree.test;
 
-import com.lukeherron.expressiontree.AlgebraicExpressionTree;
 import com.lukeherron.expressiontree.BooleanExpressionTree;
+import com.lukeherron.expressiontree.command.UserCommandFactory;
 import com.lukeherron.expressiontree.state.TreeOps;
 
 public class Test {
@@ -9,16 +9,24 @@ public class Test {
     public static void main(String[] args) {
 
         TreeOps boolTreeOps = new TreeOps(new BooleanExpressionTree(null));
-        TreeOps algebraicTreeOps = new TreeOps(new AlgebraicExpressionTree(null));
+        UserCommandFactory commandFactory = new UserCommandFactory(boolTreeOps);
+        try {
+            commandFactory.makeUserCommand("algebraic-macro -5*(3+4)").execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        boolTreeOps.format();
-        boolTreeOps.makeTree("1&0|1&!1");
-        boolTreeOps.evaluate();
-        System.out.println(true && false || true && !true);
+        //TreeOps boolTreeOps = new TreeOps(new BooleanExpressionTree(null));
+        //TreeOps algebraicTreeOps = new TreeOps(new AlgebraicExpressionTree(null));
 
-        algebraicTreeOps.format();
-        algebraicTreeOps.makeTree("1+2+3+4");
-        algebraicTreeOps.evaluate();
+        //boolTreeOps.format();
+        //boolTreeOps.makeTree("1&0|1&!1");
+        //boolTreeOps.evaluate();
+        //System.out.println(true && false || true && !true);
+
+        //algebraicTreeOps.format();
+        //algebraicTreeOps.makeTree("1+2+3+4");
+        //algebraicTreeOps.evaluate();
 
         //Interpreter interpreter = new Interpreter(new ExpressionTreeFactory());
         //ExpressionTree tree = interpreter.interpret("1&0|1&!1", "boolean");

@@ -84,20 +84,17 @@ public class State {
         }
 
         // Let the visitor factory decide on what type of eval visitor to create based upon the root node in the tree
-        Visitor evalVisitor = visitorFactory.makeEvalVisitor(tree.getRoot());
+        Visitor evalVisitor = visitorFactory.makeVisitor(tree.type() + "-eval");
 
         for (Iterator<ExpressionTree> it = tree.makeIterator(traversalOrder); it.hasNext();) {
             it.next().accept(evalVisitor);
         }
 
-        // Figure out how to print int if algebraic or bool if boolean
-        if (evalVisitor instanceof AlgebraicEvalVisitor) {
-            Integer total = ((AlgebraicEvalVisitor) evalVisitor).result();
-            System.out.println(total.toString());
+        if (tree.type().equals("algebraic")) {
+            System.out.println(((AlgebraicEvalVisitor) evalVisitor).result());
         }
-        else if (evalVisitor instanceof BooleanEvalVisitor) {
-            Boolean result = ((BooleanEvalVisitor) evalVisitor).result();
-            System.out.println(result);
+        else if (tree.type().equals("boolean")) {
+            System.out.println(((BooleanEvalVisitor) evalVisitor).result());
         }
     }
 }

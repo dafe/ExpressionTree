@@ -93,8 +93,4 @@ public class BooleanEvalVisitor implements Visitor {
     public void reset() {
         stack.clear();
     }
-
-    public String toString() {
-        return "boolean";
-    }
 }

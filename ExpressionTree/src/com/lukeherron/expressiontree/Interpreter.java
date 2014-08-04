@@ -47,7 +47,8 @@ public class Interpreter {
 
         // Empty parse trees are perfectly fine, just make sure we don't try and build from an empty tree. An empty
         // expression tree should be returned instead.
-        return parseTree.empty() ? expressionTreeFactory.makeExpressionTree(null) : buildExpressionTree(parseTree);
+        return parseTree.empty() ?
+                expressionTreeFactory.makeExpressionTree(expressionType) : buildExpressionTree(parseTree);
     }
 
     public ExpressionTree interpret(String inputExpression, ExpressionTree tree) {
@@ -165,7 +166,7 @@ public class Interpreter {
 
     /**
      * Parse boolean terminal expressions
-     * @param inputExpression String containing expressions to be parse
+     * @param inputExpression String containing expression to be parsed
      * @param index int indicating the current position in the input expression
      * @param parseTree Stack of parseTree Symbols to be processed
      * @return ParseTree that has been constructed based on the inputExpression string

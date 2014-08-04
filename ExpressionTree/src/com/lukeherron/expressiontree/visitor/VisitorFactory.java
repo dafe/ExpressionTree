@@ -1,7 +1,5 @@
 package com.lukeherron.expressiontree.visitor;
 
-import com.lukeherron.expressiontree.node.ComponentNode;
-
 import java.util.HashMap;
 
 /**
@@ -36,12 +34,5 @@ public class VisitorFactory {
         } else {
             throw new IllegalArgumentException(visitorRequest + " is not a supported visitor");
         }
-    }
-
-    public Visitor makeEvalVisitor(ComponentNode node) {
-        Visitor typeVisitor = visitorMap.get("type").execute();
-        node.accept(typeVisitor);
-
-        return makeVisitor(((TypeVisitor)typeVisitor).getType() + "-eval");
     }
 }

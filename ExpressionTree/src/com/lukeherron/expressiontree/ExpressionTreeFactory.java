@@ -38,4 +38,13 @@ public class ExpressionTreeFactory {
 
         return command.execute(componentNodeRoot);
     }
+
+    /**
+     * Overloaded method for returning empty expression trees of a given type
+     * @param treeType String representing the type of tree that should be instantiated
+     * @return ExpressionTree
+     */
+    public ExpressionTree makeExpressionTree(String treeType) {
+        return factoryMap.get(treeType).execute(null);
+    }
 }

@@ -101,8 +101,4 @@ public class AlgebraicEvalVisitor implements Visitor {
     public void reset() {
         stack.clear();
     }
-
-    public String toString() {
-        return "algebraic";
-    }
 }
