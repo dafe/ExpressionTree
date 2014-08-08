@@ -1,6 +1,7 @@
 package com.lukeherron.expressiontree.test;
 
 import com.lukeherron.expressiontree.BooleanExpressionTree;
+import com.lukeherron.expressiontree.ShiggedyTree;
 import com.lukeherron.expressiontree.command.UserCommandFactory;
 import com.lukeherron.expressiontree.state.TreeOps;
 
@@ -8,13 +9,16 @@ public class Test {
 
     public static void main(String[] args) {
 
-        TreeOps boolTreeOps = new TreeOps(new BooleanExpressionTree(null));
-        UserCommandFactory commandFactory = new UserCommandFactory(boolTreeOps);
-        try {
-            commandFactory.makeUserCommand("algebraic-macro -5*(3+4)").execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ShiggedyTree shiggedy = new ShiggedyTree();
+        shiggedy.booleanTest("test", "test").and("test", "test");
+
+        //TreeOps boolTreeOps = new TreeOps(new BooleanExpressionTree(null));
+        //UserCommandFactory commandFactory = new UserCommandFactory(boolTreeOps);
+        //try {
+        //    commandFactory.makeUserCommand("algebraic-macro -5*(3+4)").execute();
+        //} catch (Exception e) {
+        //    e.printStackTrace();
+        //}
 
         //TreeOps boolTreeOps = new TreeOps(new BooleanExpressionTree(null));
         //TreeOps algebraicTreeOps = new TreeOps(new AlgebraicExpressionTree(null));

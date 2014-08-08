@@ -54,6 +54,10 @@ public class TreeOps {
         state.evaluate(this, format);
     }
 
+    public String evaluationResult() {
+        return this.tree.getTreeEvaluationResult();
+    }
+
     public void format() {
         this.format("");
     }
@@ -94,7 +98,6 @@ public class TreeOps {
             throw new Exception("Must have = sign present");
         }
     }
-
 
     /**
      * Return a pointer to the current State

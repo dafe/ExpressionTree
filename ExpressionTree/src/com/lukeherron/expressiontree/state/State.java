@@ -91,10 +91,12 @@ public class State {
         }
 
         if (tree.type().equals("algebraic")) {
-            System.out.println(((AlgebraicEvalVisitor) evalVisitor).result());
+            //System.out.println(((AlgebraicEvalVisitor) evalVisitor).result());
+            tree.setTreeEvaluationResult(String.valueOf(((AlgebraicEvalVisitor) evalVisitor).result()));
         }
         else if (tree.type().equals("boolean")) {
-            System.out.println(((BooleanEvalVisitor) evalVisitor).result());
+            //System.out.println(((BooleanEvalVisitor) evalVisitor).result());
+            tree.setTreeEvaluationResult(String.valueOf(((BooleanEvalVisitor) evalVisitor).result()));
         }
     }
 }

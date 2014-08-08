@@ -11,6 +11,7 @@ public abstract class ExpressionTree implements Visitable {
 
     protected ComponentNode root = null;
     protected IteratorFactory treeIteratorFactory = new IteratorFactory();
+    private String treeEvaluationResult;
 
     /**
      * ExpressionTree constructor takes a Node pointer that contains all the nodes in the expression tree
@@ -52,6 +53,14 @@ public abstract class ExpressionTree implements Visitable {
         }
 
         return temp;
+    }
+
+    public void setTreeEvaluationResult(String result) {
+        this.treeEvaluationResult = result;
+    }
+
+    public String getTreeEvaluationResult() {
+        return this.treeEvaluationResult;
     }
 
     @Override
