@@ -35,55 +35,66 @@ public class BooleanEvaluator {
         this.formatOrder = "level-order";
     }
 
-    private void setFormatOrder() {
-
+    public boolean evalInOrder() throws Exception {
+        return this.eval("in-order");
     }
 
-    public boolean eval() {
+    public boolean evalLevelOrder() throws Exception {
+        return this.eval("level-order");
+    }
+
+    public boolean evalPostOrder() throws Exception {
+        return this.eval("post-order");
+    }
+
+    public boolean evalPreOrder() throws Exception {
+        return this.eval("pre-order");
+    }
+
+    public boolean eval() throws Exception {
+        // Default implementation uses post order
         return this.evalPostOrder();
     }
 
-    public boolean evalInOrder() {
-        try {
-            commandFactory.makeUserCommand("format " + this.formatOrder).execute();
-            commandFactory.makeUserCommand("boolean-expr " + this.expression).execute();
-            commandFactory.makeUserCommand("eval in-order").execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private boolean eval(String evalOrder) throws Exception  {
+        commandFactory.makeUserCommand("format " + this.formatOrder).execute();
+        commandFactory.makeUserCommand("boolean-expr " + this.expression).execute();
+        commandFactory.makeUserCommand("eval " + evalOrder).execute();
 
         return boolTreeOps.evaluationResult().equals("true");
-    }
-
-    public boolean evalPostOrder() {
-        try {
-            commandFactory.makeUserCommand("format " + this.formatOrder).execute();
-            commandFactory.makeUserCommand("boolean-expr " + this.expression).execute();
-            commandFactory.makeUserCommand("eval post-order").execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return boolTreeOps.evaluationResult().equals("true");
-    }
-
-    public boolean evalPreOrder() {
-        return false;
-    }
-
-    public boolean evalLevelOrder() {
-        return false;
     }
 
     public BooleanEvaluator and(String test, String truth) {
+        this.expression = this.stringEval("&", test, truth);
+
         return this;
     }
 
     public BooleanEvaluator or(String test, String truth) {
+        this.expression = this.stringEval("|", test, truth);
+
         return this;
     }
 
     public BooleanEvaluator not(String test, String truth) {
+        this.expression = this.stringEval("!", test, truth);
+
         return this;
+    }
+
+    public BooleanEvaluator openParens() {
+        this.expression = this.expression.concat("(");
+
+        return this;
+    }
+
+    public BooleanEvaluator closeParens() {
+        this.expression = this.expression.concat(")");
+
+        return this;
+    }
+
+    private String stringEval(String operator, String test, String truth) {
+        return this.expression.concat(operator.concat(test.equals(truth) ? "1" : "0"));
     }
 }

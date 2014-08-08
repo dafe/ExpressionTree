@@ -12,7 +12,7 @@ import java.util.Stack;
 public class AlgebraicEvalVisitor implements Visitor {
 
     // Stack containing the integral total of the expression tree that's being visited
-    private Stack<Integer> stack = new Stack<>();
+    private Stack<Double> stack = new Stack<>();
 
     public AlgebraicEvalVisitor() {}
 
@@ -31,7 +31,7 @@ public class AlgebraicEvalVisitor implements Visitor {
     @Override
     public void visit(CompositeDivideNode node) {
         if (stack.size() >= 2 && stack.peek() != null) {
-            int rhs = stack.pop();
+            double rhs = stack.pop();
             stack.push(stack.pop() / rhs);
         }
         else {
@@ -67,7 +67,7 @@ public class AlgebraicEvalVisitor implements Visitor {
     @Override
     public void visit(CompositeSubtractNode node) {
         if (stack.size() >= 2) {
-            int rhs = stack.pop();
+            double rhs = stack.pop();
             stack.push(stack.pop() - rhs);
         }
     }
@@ -86,7 +86,7 @@ public class AlgebraicEvalVisitor implements Visitor {
      * Print the total of the evaluation
      * @return int containing the total of the evaluation
      */
-    public int result() {
+    public double result() {
         if (!stack.isEmpty()) {
             return stack.peek();
         }

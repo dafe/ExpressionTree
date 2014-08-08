@@ -1,16 +1,23 @@
 package com.lukeherron.expressiontree.test;
 
-import com.lukeherron.expressiontree.BooleanExpressionTree;
 import com.lukeherron.expressiontree.ShiggedyTree;
-import com.lukeherron.expressiontree.command.UserCommandFactory;
-import com.lukeherron.expressiontree.state.TreeOps;
 
 public class Test {
 
     public static void main(String[] args) {
 
         ShiggedyTree shiggedy = new ShiggedyTree();
-        shiggedy.booleanTest("test", "test").and("test", "test");
+
+        try {
+            boolean result = shiggedy.booleanTest("test", "test").and("test", "test").eval();
+            //int total = shiggedy.calculate("-5*(3+4)").divide(5).eval();
+            //double total = shiggedy.calculate(-5).multiply().openParens(3).add(4).closeParens().divide(5).eval();
+            double total = shiggedy.calculate(4).add(7).add(9).multiply(4).divide(2).subtract(2).eval();
+            System.out.println(result);
+            System.out.println(total);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         //TreeOps boolTreeOps = new TreeOps(new BooleanExpressionTree(null));
         //UserCommandFactory commandFactory = new UserCommandFactory(boolTreeOps);

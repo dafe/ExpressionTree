@@ -34,23 +34,78 @@ public class AlgebraicCalculator {
         this.formatOrder = "level-order";
     }
 
-    private void setFormatOrder() {
-
+    public double evalInOrder() throws Exception {
+        return this.eval("in-order");
     }
 
-    public boolean eval() {
+    public double evalLevelOrder() throws Exception {
+        return this.eval("level-order");
+    }
+
+    public double evalPostOrder() throws Exception {
+        return this.eval("post-order");
+    }
+
+    public double evalPreOrder() throws Exception {
+        return this.eval("pre-order");
+    }
+
+    public double eval() throws Exception {
+        // Default implementation uses post order
         return this.evalPostOrder();
     }
 
-    public int evalInOrder() {
-        try {
-            commandFactory.makeUserCommand("format " + this.formatOrder).execute();
-            commandFactory.makeUserCommand("boolean-expr " + this.expression).execute();
-            commandFactory.makeUserCommand("eval in-order").execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private double eval(String evalOrder) throws Exception  {
+        commandFactory.makeUserCommand("format " + this.formatOrder).execute();
+        commandFactory.makeUserCommand("algebraic-expr " + this.expression).execute();
+        commandFactory.makeUserCommand("eval " + evalOrder).execute();
 
-        return algebraicTreeOps.evaluationResult()
+        return Double.parseDouble(algebraicTreeOps.evaluationResult());
+    }
+
+    public AlgebraicCalculator add(int number) {
+        this.expression = this.stringEval("+", number);
+
+        return this;
+    }
+
+    public AlgebraicCalculator subtract(int number) {
+        this.expression = this.stringEval("-", number);
+
+        return this;
+    }
+
+    public AlgebraicCalculator multiply() {
+        this.expression = this.expression.concat("*");
+
+        return this;
+    }
+
+    public AlgebraicCalculator multiply(int number) {
+        this.expression = this.stringEval("*", number);
+
+        return this;
+    }
+
+    public AlgebraicCalculator divide(int number) {
+        this.expression = this.stringEval("/", number);
+
+        return this;
+    }
+
+    public AlgebraicCalculator openParens(int number) {
+        this.expression = this.stringEval("(", number);
+
+        return this;
+    }
+
+    public AlgebraicCalculator closeParens() {
+        this.expression = this.expression.concat(")");
+
+        return this;
+    }
+
+    private String stringEval(String operator, int number) {
+        return this.expression.concat(operator).concat(String.valueOf(number));
     }
 }

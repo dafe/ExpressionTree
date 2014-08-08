@@ -11,7 +11,7 @@ public class CompositeSubtractNode extends CompositeBinaryNode {
         super(left, right);
     }
 
-    public int item() {
+    public double item() {
         return '-';
     }
 

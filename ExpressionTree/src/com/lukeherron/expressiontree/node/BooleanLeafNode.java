@@ -21,7 +21,7 @@ public class BooleanLeafNode extends LeafNode {
      * Return the item stored in the node
      * @return boolean contained in this node
      */
-    public int item() {
+    public double item() {
         return Integer.parseInt(this.item);
     }
 

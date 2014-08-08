@@ -21,7 +21,7 @@ public class UserCommandFactory {
         // A format string maps to a command object that creates a FormatCommand implementation
         commandMap.put("format", param -> new FormatCommand(treeOps, param));
         // An expr string maps to a command object that creates an AlgebraicExprCommand implementation
-        commandMap.put("algeraic-expr", param -> new AlgebraicExprCommand(treeOps, param));
+        commandMap.put("algebraic-expr", param -> new AlgebraicExprCommand(treeOps, param));
         // An expr string maps to a command object that creates a BooleanExprCommand implementation
         commandMap.put("boolean-expr", param -> new BooleanExprCommand(treeOps, param));
         // A print string maps to a command object that creates a PrintCommand implementation

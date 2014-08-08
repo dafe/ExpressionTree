@@ -29,7 +29,7 @@ public abstract class ComponentNode implements Visitable {
      * Returns the value stored in the node. No-op in the base class
      * @return object representing the symbol held by the node
      */
-    public int item() {
+    public double item() {
         throw new UnsupportedOperationException("ComponentNode::item() called improperly");
     }
 

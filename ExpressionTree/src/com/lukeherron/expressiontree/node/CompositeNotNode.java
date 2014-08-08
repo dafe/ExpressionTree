@@ -11,7 +11,7 @@ public class CompositeNotNode extends CompositeUnaryNode {
         super(right);
     }
 
-    public int item() {
+    public double item() {
         return '!';
     }
 

@@ -37,8 +37,8 @@ public class BooleanExpressionTree extends ExpressionTree {
         return "boolean";
     }
 
-    public int item() throws Exception {
-        int temp;
+    public double item() throws Exception {
+        double temp;
         synchronized (this) {
             temp = root.item();
         }

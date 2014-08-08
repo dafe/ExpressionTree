@@ -37,10 +37,10 @@ public class AlgebraicExpressionTree extends ExpressionTree {
         return "algebraic";
     }
 
-    public int item() throws Exception {
-        int temp;
+    public double item() throws Exception {
+        double temp;
         synchronized (this) {
-            temp = (int)root.item();
+            temp = (double)root.item();
         }
 
         return temp;
